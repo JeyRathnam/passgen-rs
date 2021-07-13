@@ -6,9 +6,9 @@ use copypasta::ClipboardContext;
 use copypasta::ClipboardProvider;
 
 fn main() {
-    let matches = App::new("randpass")
+    let matches = App::new("passgen-rs")
         .version("0.1")
-        .author("Jey")
+        .author("Jey <jai.rathnem@gmail.com>")
         .about("Password Generator")
         .args(&[
             Arg::new("length")
