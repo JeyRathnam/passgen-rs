@@ -1,17 +1,11 @@
-use clap::{App, Arg};
+use clap::{App, Arg, ArgMatches};
 use rand::Rng;
 use std::vec::Vec;
+extern crate copypasta;
+use copypasta::ClipboardContext;
+use copypasta::ClipboardProvider;
 
 fn main() {
-    let mut passlen = 8;
-    const UPPERCASE: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const LOWERCASE: &str = "abcdefghijklmnopqrstuvwxyz";
-    const NUMBERS: &str = "0123456789";
-    const SYMBOLS: &str = ")(*&^%$#@!~";
-
-    let mut charset = String::from(UPPERCASE);
-    charset.push_str(LOWERCASE);
-
     let matches = App::new("randpass")
         .version("0.1")
         .author("Jey")
@@ -20,15 +14,35 @@ fn main() {
             Arg::new("length")
                 .short('l')
                 .about("Length of password")
-                .takes_value(true),
+                .takes_value(true)
+                .validator(is_numeric),
             Arg::new("exclude-symbols")
-                .short('e')
+                .long("es")
                 .about("Exclude symbols"),
             Arg::new("exclude-numbers")
-                .short('n')
+                .long("en")
                 .about("Exclude numbers"),
         ])
         .get_matches();
+
+    let password = generate_password(&matches);
+
+    let mut ctx = ClipboardContext::new().unwrap();
+    ctx.set_contents(password.to_string()).unwrap();
+
+    println!("{:?} - Copied to clipboard", &password);
+}
+
+fn generate_password(matches: &ArgMatches) -> String {
+    const UPPERCASE: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const LOWERCASE: &str = "abcdefghijklmnopqrstuvwxyz";
+    const NUMBERS: &str = "0123456789";
+    const SYMBOLS: &str = ")(*&^%$#@!~";
+
+    let mut passlen = 8;
+
+    let mut charset = String::from(UPPERCASE);
+    charset.push_str(LOWERCASE);
 
     if !!!matches.is_present("exclude-symbols") {
         charset.push_str(SYMBOLS);
@@ -52,6 +66,13 @@ fn main() {
             char_vec[idx] as char
         })
         .collect();
+    password
+}
 
-    println!("{:?}", password);
+fn is_numeric(input: &str) -> Result<(), String> {
+    let test = &input.parse::<u8>();
+    match test {
+        Ok(_) => Ok(()),
+        Err(__) => Err(String::from("Length must be a number")),
+    }
 }
