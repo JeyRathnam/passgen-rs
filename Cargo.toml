@@ -1,5 +1,5 @@
 [package]
-name = "randpass"
+name = "passgen"
 version = "0.1.0"
 authors = ["Jeyachandran Rathnam <jai.rathnem@gmail.com>"]
 edition = "2018"

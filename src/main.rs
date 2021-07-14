@@ -22,15 +22,21 @@ fn main() {
             Arg::new("exclude-numbers")
                 .long("en")
                 .about("Exclude numbers"),
+            Arg::new("no-copy")
+                .long("nc")
+                .about("Donot copy to clipboard"),
         ])
         .get_matches();
 
     let password = generate_password(&matches);
 
-    let mut ctx = ClipboardContext::new().unwrap();
-    ctx.set_contents(password.to_string()).unwrap();
-
-    println!("{:?} - Copied to clipboard", &password);
+    if !!!matches.is_present("no-copy") {
+        let mut ctx = ClipboardContext::new().unwrap();
+        ctx.set_contents(password.to_string()).unwrap();
+        println!("{:?} - Copied to clipboard", &password);
+    } else {
+        println!("{:?}", &password);
+    }
 }
 
 fn generate_password(matches: &ArgMatches) -> String {
