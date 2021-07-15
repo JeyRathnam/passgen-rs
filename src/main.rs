@@ -33,9 +33,9 @@ fn main() {
     if !!!matches.is_present("no-copy") {
         let mut ctx = ClipboardContext::new().unwrap();
         ctx.set_contents(password.to_string()).unwrap();
-        println!("{:?} - Copied to clipboard", &password);
+        println!("{} - Copied to clipboard", &password);
     } else {
-        println!("{:?}", &password);
+        println!("{}", &password);
     }
 }
 
@@ -50,11 +50,11 @@ fn generate_password(matches: &ArgMatches) -> String {
     let mut charset = String::from(UPPERCASE);
     charset.push_str(LOWERCASE);
 
-    if !!!matches.is_present("exclude-symbols") {
+    if !matches.is_present("exclude-symbols") {
         charset.push_str(SYMBOLS);
     }
 
-    if !!!matches.is_present("exclude-numbers") {
+    if !matches.is_present("exclude-numbers") {
         charset.push_str(NUMBERS);
     }
 
