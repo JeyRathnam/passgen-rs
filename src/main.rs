@@ -1,9 +1,8 @@
 use clap::{App, Arg, ArgMatches};
-use rand::Rng;
-use std::vec::Vec;
-extern crate copypasta;
 use copypasta::ClipboardContext;
 use copypasta::ClipboardProvider;
+use rand::Rng;
+mod utils;
 
 fn main() {
     let matches = App::new("passgen-rs")
@@ -31,9 +30,13 @@ fn main() {
     let password = generate_password(&matches);
 
     if !!!matches.is_present("no-copy") {
-        let mut ctx = ClipboardContext::new().unwrap();
-        ctx.set_contents(password.to_string()).unwrap();
-        println!("{} - Copied to clipboard", &password);
+        let mut ctx = ClipboardContext::new().expect(utils::COPY_PASTA_ERROR);
+        let copy_to_clipboard = ctx.set_contents(password.to_string());
+
+        match copy_to_clipboard {
+            Ok(_) => println!("{} - Copied to clipboard", &password),
+            Err(__) => println!("{}", utils::COPY_PASTA_ERROR),
+        }
     } else {
         println!("{}", &password);
     }
