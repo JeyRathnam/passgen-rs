@@ -1,6 +1,5 @@
 use clap::{App, Arg};
-use copypasta::ClipboardContext;
-use copypasta::ClipboardProvider;
+use utils::PassGenConfig;
 mod utils;
 
 fn main() {
@@ -15,10 +14,10 @@ fn main() {
                 .takes_value(true)
                 .validator(utils::is_numeric),
             Arg::new("exclude-symbols")
-                .long("es")
+                .long("ex-s")
                 .about("Exclude symbols"),
             Arg::new("exclude-numbers")
-                .long("en")
+                .long("ex-n")
                 .about("Exclude numbers"),
             Arg::new("no-copy")
                 .long("nc")
@@ -26,19 +25,13 @@ fn main() {
         ])
         .get_matches();
 
-    let password = utils::generate_password(&matches);
+    let config: PassGenConfig = utils::build_passgen_config(&matches);
 
-    if !matches.is_present("no-copy") {
-        let mut ctx = ClipboardContext::new().expect(utils::COPY_PASTA_ERROR);
-        let copy_to_clipboard = ctx.set_contents(password.to_string());
+    let password = utils::generate_password(&config);
 
-        match copy_to_clipboard {
-            Ok(_) => println!("{} - Copied to clipboard", &password),
-            Err(__) => println!("{}", utils::COPY_PASTA_ERROR),
-        }
+    if !config.no_copy_to_clipboard {
+        utils::copy_to_clipboard(&password);
     } else {
         println!("{}", &password);
     }
 }
-
-
