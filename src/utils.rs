@@ -1,53 +1,15 @@
-use clap::ArgMatches;
 use copypasta::ClipboardContext;
 use copypasta::ClipboardProvider;
 use rand::Rng;
 
-pub const COPY_PASTA_ERROR: &str = "Could not copy to clipboard.";
+use crate::PassGenConfig;
 
-pub const DEFAULT_PASSWORD_LENGTH: i32 = 8;
+pub const COPY_PASTA_ERROR: &str = "Could not copy to clipboard.";
 
 pub const UPPERCASE: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 pub const LOWERCASE: &str = "abcdefghijklmnopqrstuvwxyz";
 pub const NUMBERS: &str = "0123456789";
 pub const SYMBOLS: &str = ")(*&^%$#@!~";
-
-pub struct PassGenConfig {
-    length: i32,
-    exclude_symbols: bool,
-    exclude_numbers: bool,
-    pub no_copy_to_clipboard: bool,
-}
-
-pub fn build_passgen_config(matches: &ArgMatches) -> PassGenConfig {
-    let mut config = PassGenConfig {
-        length: DEFAULT_PASSWORD_LENGTH,
-        exclude_symbols: false,
-        exclude_numbers: false,
-        no_copy_to_clipboard: false,
-    };
-
-    if matches.is_present("exclude-symbols") {
-        config.exclude_symbols = true;
-    }
-
-    if matches.is_present("exclude-numbers") {
-        config.exclude_numbers = true;
-    }
-
-    if let Some(len) = matches.value_of("length") {
-        config.length = match len.parse() {
-            Ok(len) => len,
-            Err(_) => DEFAULT_PASSWORD_LENGTH,
-        }
-    }
-
-    if matches.is_present("no-copy") {
-        config.no_copy_to_clipboard = true;
-    }
-
-    config
-}
 
 pub fn generate_password(config: &PassGenConfig) -> String {
     let passlen = config.length;
@@ -101,7 +63,7 @@ mod tests {
     #[test]
     fn test_generate_password_length() {
         let config: PassGenConfig = PassGenConfig {
-            length: 8,
+            length: 30,
             exclude_numbers: true,
             exclude_symbols: true,
             no_copy_to_clipboard: true,
@@ -114,7 +76,7 @@ mod tests {
     #[test]
     fn test_generate_password_numbers() {
         let config: PassGenConfig = PassGenConfig {
-            length: 8,
+            length: 30,
             exclude_numbers: false,
             exclude_symbols: true,
             no_copy_to_clipboard: true,
@@ -132,7 +94,7 @@ mod tests {
     #[test]
     fn test_generate_password_symbols() {
         let config: PassGenConfig = PassGenConfig {
-            length: 8,
+            length: 30,
             exclude_numbers: true,
             exclude_symbols: false,
             no_copy_to_clipboard: true,
