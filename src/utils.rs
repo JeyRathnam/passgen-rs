@@ -38,6 +38,19 @@ pub fn generate_password(config: &PassGenConfig) -> String {
     password
 }
 
+pub fn post_generate_password(config: &PassGenConfig, password: &str) -> Vec<String> {
+    let mut output_logs: Vec<String> = vec![];
+
+    if !config.no_copy_to_clipboard {
+        let copy_log = self::copy_to_clipboard(&password);
+        output_logs.push(copy_log);
+    } else {
+        output_logs.push(String::from(password))
+    }
+
+    output_logs
+}
+
 pub fn is_numeric(input: &str) -> Result<(), String> {
     let test = &input.parse::<i32>();
     match test {
@@ -46,13 +59,13 @@ pub fn is_numeric(input: &str) -> Result<(), String> {
     }
 }
 
-pub fn copy_to_clipboard(copy_string: &str) {
+pub fn copy_to_clipboard(copy_string: &str) -> String {
     let mut ctx = ClipboardContext::new().expect(self::COPY_PASTA_ERROR);
     let copy_to_clipboard = ctx.set_contents(copy_string.to_string());
 
     match copy_to_clipboard {
-        Ok(_) => println!("{} - Copied to clipboard", &copy_string),
-        Err(__) => println!("{}", self::COPY_PASTA_ERROR),
+        Ok(_) => format!("{} - Copied to clipboard", &copy_string),
+        Err(__) => format!("{}", self::COPY_PASTA_ERROR),
     }
 }
 
