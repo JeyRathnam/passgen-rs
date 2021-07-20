@@ -1,3 +1,4 @@
+use colored::*;
 use copypasta::ClipboardContext;
 use copypasta::ClipboardProvider;
 use rand::Rng;
@@ -45,7 +46,7 @@ pub fn post_generate_password(config: &PassGenConfig, password: &str) -> Vec<Str
         let copy_log = self::copy_to_clipboard(&password);
         output_logs.push(copy_log);
     } else {
-        output_logs.push(String::from(password))
+        output_logs.push(format!("{}", String::from(password).yellow()))
     }
 
     output_logs
@@ -64,8 +65,16 @@ pub fn copy_to_clipboard(copy_string: &str) -> String {
     let copy_to_clipboard = ctx.set_contents(copy_string.to_string());
 
     match copy_to_clipboard {
-        Ok(_) => format!("{} - Copied to clipboard", &copy_string),
-        Err(__) => format!("{}", self::COPY_PASTA_ERROR),
+        Ok(_) => format!(
+            "{} - {}",
+            &copy_string.green(),
+            "Copied to clipboard".yellow()
+        ),
+        Err(__) => format!(
+            "{} - {}",
+            &copy_string.green(),
+            self::COPY_PASTA_ERROR.red()
+        ),
     }
 }
 
