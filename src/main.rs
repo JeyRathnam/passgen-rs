@@ -10,6 +10,7 @@ fn main() {
         .args(&[
             Arg::new("length")
                 .short('l')
+                .long("length")
                 .about("Length of password")
                 .takes_value(true)
                 .validator(utils::is_numeric),
